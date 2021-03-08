@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
+    public float Health = 100f;
     public int speed;
     public int jumpHeight;
     Rigidbody2D bod;
@@ -40,10 +40,33 @@ public class PlayerController : MonoBehaviour
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
-    { 
-        if (collision.gameObject.tag == "Floor" )
+    {
+        if (collision.gameObject.tag == "Floor")
         {
             isJumping = false;
         }
     }
+   
+    /*public void TakeDamage(int damage)
+    {
+        if (//Needs to add if player collides with terrain then take dmg;)
+        {
+            for (int i = 0; i < damage; i++)
+            {
+                Health--;
+
+
+                if (Health <= 0) Die();
+            }
+
+
+        }
+    }
+
+        void Die()
+        {
+            gameObject.SetActive(false);
+        }
+    
+*/
 }
