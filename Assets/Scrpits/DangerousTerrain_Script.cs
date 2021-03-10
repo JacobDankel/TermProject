@@ -15,26 +15,28 @@ public class DangerousTerrain_Script : MonoBehaviour
 
     private void Awake()
     {
-        Bod = GetComponent<Rigidbody2D>(); 
+        Bod = GetComponent<Rigidbody2D>();
 
     }
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
-    }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player") && !hasHurt)
-        {
-            collision.GetComponent<PlayerController>().TakeDamage(damage);
-            hasHurt = true;
-            Invoke("Disable", 0.001f);
-        }
     }
+    /*
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (collision.CompareTag("Player") && !hasHurt)
+            {
+                collision.GetComponent<PlayerController>().TakeDamage(damage);
+                hasHurt = true;
+                Invoke("Disable", 0.001f);
+            }
+        }
+    */
+}

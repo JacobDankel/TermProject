@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
     public int speed;
     public int jumpHeight;
     Rigidbody2D bod;
-    private bool isJumping;
+    public bool isJumping;
 
     private void Awake()
     {
@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.A))
         {
-            bod.AddForce(Vector2.left * speed);
+            bod.AddForce(Vector2.left * speed * Time.deltaTime);
         }
 
         if (Input.GetKey(KeyCode.S))
@@ -35,18 +35,19 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.D))
         {
-            bod.AddForce(Vector2.right * speed);
+            bod.AddForce(Vector2.right * speed * Time.deltaTime);
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Floor")
+        if (collision != null)
         {
             isJumping = false;
         }
     }
-   
+
+
     /*public void TakeDamage(int damage)
     {
         if (//Needs to add if player collides with terrain then take dmg;)
