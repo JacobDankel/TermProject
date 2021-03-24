@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public int jumpHeight;
     Rigidbody2D bod;
     public bool isJumping;
+    public Rigidbody2D platform;
 
     private void Awake()
     {
@@ -46,6 +47,7 @@ public class PlayerController : MonoBehaviour
             isJumping = false;
         }
     }
+
 
 
     /*public void TakeDamage(int damage)
