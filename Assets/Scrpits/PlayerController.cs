@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float Health = 100f;
+    public float maxHP;
+    public float hp;
     public int speed;
     public int jumpHeight;
     Rigidbody2D bod;
@@ -13,6 +14,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        hp = maxHP;
         bod = GetComponent<Rigidbody2D>();
     }
 
@@ -45,31 +47,34 @@ public class PlayerController : MonoBehaviour
         if (collision != null)
         {
             isJumping = false;
-        }
-    }
-
-
-
-    /*public void TakeDamage(int damage)
-    {
-        if (//Needs to add if player collides with terrain then take dmg;)
-        {
-            for (int i = 0; i < damage; i++)
+            if (collision.gameObject.CompareTag("Platform"))
             {
-                Health--;
-
-
-                if (Health <= 0) Die();
+                platform = collision.gameObject.GetComponent<Rigidbody2D>();
             }
-
-
         }
     }
 
-        void Die()
-        {
-            gameObject.SetActive(false);
+
+
+    public void TakeDamage(int damage)
+    {
+        for (int i = 0; i < damage; i++){
+                hp--;
+                if (hp<= 0) Die();
         }
+    }
+
+    public void Heal(float amt)
+    {
+        float newHP = hp + amt;
+        if (newHP > maxHP) hp = maxHP;
+        else hp = newHP;
+    }
+
+    private void Die()
+    {
+        gameObject.SetActive(false);
+        Time.timeScale = 0.5f;
+    }
     
-*/
 }

@@ -1,12 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
+    public PlayerController Player;
     public Camera playerCam;
     public Camera sceneCam;
+    public Color32 backgroundColor;
     public Cursor cursor;
+    public AudioClip wallFinish;
+    [Space]
+    public Text healthText;
+    public Image healthImage;
+    public float CurrentHealth;
+    [Space]
+    public float timeLimit;
+    public float timeRemaining;
+    public Text timer;
+
+    public float verticleMoveScalar;
+    public float horizontalMoveScalar;
     [Space]
     public int wallSize;
     public Transform LeftWall;
@@ -19,85 +34,119 @@ public class GameController : MonoBehaviour
     private bool bottomDone = true;
     [Space]
     public GameObject endBox;
+    public float endBoxVertBound;
+    public float endBoxHorzBound;
     public int roundNum = 1;
 
-    private IEnumerator startRound;
-    private IEnumerator endRound;
 
     private void Start()
     {
+        CurrentHealth = Player.hp;
+        timeRemaining = timeLimit;
+
+        //Calcuates the amount to move the walls
+        verticleMoveScalar = 0.25f;
+        horizontalMoveScalar = verticleMoveScalar * 2;
+
+        //Randomizes the box position
+        endBoxHorzBound = Random.Range(-14f, 14f);
+        endBoxVertBound = Random.Range(-8f, 8f);
+        endBox.transform.position = new Vector3(endBoxHorzBound, endBoxVertBound, 0);
+
+
         playerCam.enabled = false;
         sceneCam.GetComponent<AudioListener>().enabled = true;
         sceneCam.enabled = true;
         playerCam.GetComponent<AudioListener>().enabled = false;
 
-        startRound = ShrinkWalls(0.015f);
-        endRound = FinishRound(0.5f);
-        StartCoroutine(startRound);
     }
 
     public void Update()
     {
-        if (Application.isEditor)
-        {
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                sceneCam.GetComponent<AudioListener>().enabled = !sceneCam.GetComponent<AudioListener>().enabled;
-                sceneCam.enabled = !sceneCam.enabled;
-                playerCam.GetComponent<AudioListener>().enabled = !playerCam.GetComponent<AudioListener>().enabled;
-                playerCam.enabled = !playerCam.enabled;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                Time.timeScale = 1;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                Time.timeScale *= 2;
-            }
-        }
-        //print(wallScale/Time.time);
-    }
+        //Timer
 
-    private IEnumerator ShrinkWalls(float waitTime)
-    {
-        while (true)
+        if (timeRemaining > 0)
         {
-            yield return new WaitForSeconds(waitTime);
+            //Reduces the time and also updates to a new trunkated time
+            timeRemaining -= Time.deltaTime;
+            float trunkTime = Mathf.Floor(timeRemaining * 100) / 100;
+            timer.text = trunkTime.ToString();
 
             if (LeftWall.position.x <= endBox.transform.position.x - 15)
             {
-                LeftWall.position = LeftWall.position + Vector3.right * 0.005f;
+                LeftWall.position = LeftWall.position + Vector3.right * horizontalMoveScalar * Time.deltaTime;
             }
-            else leftDone = true;
-
+            else
+            {
+                leftDone = true;
+            }
 
             if (TopWall.position.y >= endBox.transform.position.y + 11)
             {
-                TopWall.position = TopWall.position + Vector3.down * 0.003f;
+                TopWall.position = TopWall.position + Vector3.down * verticleMoveScalar * Time.deltaTime;//   (1/60) / 100
             }
             else topDone = true;
 
 
             if (RightWall.position.x >= endBox.transform.position.x + 15)
             {
-                RightWall.position = RightWall.position + Vector3.left * 0.005f;
+                RightWall.position = RightWall.position + Vector3.left * horizontalMoveScalar * Time.deltaTime;
             }
             else rightDone = true;
 
 
-            if (BottomWall.position.y <= endBox.transform.position.y -11)
+            if (BottomWall.position.y <= endBox.transform.position.y - 11)
             {
-                BottomWall.position = BottomWall.position + Vector3.up * 0.003f;
+                BottomWall.position = BottomWall.position + Vector3.up * verticleMoveScalar * Time.deltaTime;
             }
             else bottomDone = true;
 
-
-            if (leftDone && rightDone && bottomDone && topDone) StartCoroutine(endRound);
         }
+        else
+        {
+            Debug.Log("Timer Ended");
+        }
+
+        //Updating Health Bar
+        CurrentHealth = Player.hp;
+        healthImage.fillAmount = Player.hp / Player.maxHP;
+
+        if (Application.isEditor)
+        {
+            //Camera Toggle
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                //Scene Cam Toggle
+                sceneCam.GetComponent<AudioListener>().enabled = !sceneCam.GetComponent<AudioListener>().enabled;
+                sceneCam.enabled = !sceneCam.enabled;
+
+                //Player Cam Toggle
+                playerCam.GetComponent<AudioListener>().enabled = !playerCam.GetComponent<AudioListener>().enabled;
+                playerCam.enabled = !playerCam.enabled;
+            }
+            //Sets time scale to 1
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                Time.timeScale = 1;
+            }
+            //Doubles time scale
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                Time.timeScale *= 2;
+            }
+
+            //Press H to heal
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                Player.Heal(2);
+            }
+            //Press L to remove health
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                Player.TakeDamage(2);
+            }
+        }
+        //print(wallScale/Time.time);
     }
-    private IEnumerator FinishRound(float waitTime)
-    {
-        yield return 0;
-    }
+
 }

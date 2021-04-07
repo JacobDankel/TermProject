@@ -23,7 +23,7 @@ public class HealthBar_Script : MonoBehaviour
     void Update()
     {
         //Determines the percentage at which the player is at (For Slider) 
-        CurrentHealth = Player.Health;
+        CurrentHealth = Player.hp;
         HealthBar.fillAmount = CurrentHealth / MaxHealth;
     }
 }
