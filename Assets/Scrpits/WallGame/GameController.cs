@@ -19,9 +19,12 @@ public class GameController : MonoBehaviour
     public float timeLimit;
     public float timeRemaining;
     public Text timer;
-
-    public float verticleMoveScalar;
-    public float horizontalMoveScalar;
+    public bool startWalls = false;
+    [Space]
+    public float topVerticleMoveScalar;
+    public float bottomVerticleMoveScalar;
+    public float leftHorizontalMoveScalar;
+    public float rightHorizontalMoveScalar;
     [Space]
     public int wallSize;
     public Transform LeftWall;
@@ -44,15 +47,17 @@ public class GameController : MonoBehaviour
         CurrentHealth = Player.hp;
         timeRemaining = timeLimit;
 
-        //Calcuates the amount to move the walls
-        verticleMoveScalar = 0.25f;
-        horizontalMoveScalar = verticleMoveScalar * 2;
-
         //Randomizes the box position
-        endBoxHorzBound = Random.Range(-14f, 14f);
-        endBoxVertBound = Random.Range(-8f, 8f);
+        endBoxHorzBound = Random.Range(-15f, 15f);      // Net Range of 30 Units
+        endBoxVertBound = Random.Range(-8f, 8f);        // Net Range of 16 Units
         endBox.transform.position = new Vector3(endBoxHorzBound, endBoxVertBound, 0);
 
+        //Calcuates the amount to move the walls
+        topVerticleMoveScalar = 0.25f;
+        bottomVerticleMoveScalar = 0.25f;
+        leftHorizontalMoveScalar = 0.5f;
+        rightHorizontalMoveScalar = 0.5f;
+        
 
         playerCam.enabled = false;
         sceneCam.GetComponent<AudioListener>().enabled = true;
@@ -64,17 +69,23 @@ public class GameController : MonoBehaviour
     public void Update()
     {
         //Timer
-
-        if (timeRemaining > 0)
+        
+        if(timeRemaining <= timeLimit - 20 && !startWalls)
+        {
+            Debug.Log(timeRemaining);
+            startWalls = true;
+        }
+        timeRemaining -= Time.deltaTime;
+        float trunkTime = Mathf.Floor(timeRemaining * 100) / 100;
+        timer.text = trunkTime.ToString();
+        if (timeRemaining > 0 && startWalls)
         {
             //Reduces the time and also updates to a new trunkated time
-            timeRemaining -= Time.deltaTime;
-            float trunkTime = Mathf.Floor(timeRemaining * 100) / 100;
-            timer.text = trunkTime.ToString();
+            
 
             if (LeftWall.position.x <= endBox.transform.position.x - 15)
             {
-                LeftWall.position = LeftWall.position + Vector3.right * horizontalMoveScalar * Time.deltaTime;
+                LeftWall.position = LeftWall.position + Vector3.right * leftHorizontalMoveScalar * Time.deltaTime;
             }
             else
             {
@@ -83,26 +94,26 @@ public class GameController : MonoBehaviour
 
             if (TopWall.position.y >= endBox.transform.position.y + 11)
             {
-                TopWall.position = TopWall.position + Vector3.down * verticleMoveScalar * Time.deltaTime;//   (1/60) / 100
+                TopWall.position = TopWall.position + Vector3.down * topVerticleMoveScalar * Time.deltaTime;//   (1/60) / 100
             }
             else topDone = true;
 
 
             if (RightWall.position.x >= endBox.transform.position.x + 15)
             {
-                RightWall.position = RightWall.position + Vector3.left * horizontalMoveScalar * Time.deltaTime;
+                RightWall.position = RightWall.position + Vector3.left * rightHorizontalMoveScalar * Time.deltaTime;
             }
             else rightDone = true;
 
 
             if (BottomWall.position.y <= endBox.transform.position.y - 11)
             {
-                BottomWall.position = BottomWall.position + Vector3.up * verticleMoveScalar * Time.deltaTime;
+                BottomWall.position = BottomWall.position + Vector3.up * bottomVerticleMoveScalar * Time.deltaTime;
             }
             else bottomDone = true;
 
         }
-        else
+        if(timeRemaining <= 0)
         {
             Debug.Log("Timer Ended");
         }
