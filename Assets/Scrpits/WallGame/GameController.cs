@@ -6,8 +6,11 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     public PlayerController Player;
+    public int money;
+    public Text moneytxt;
+    [Space]
     public Camera playerCam;
-    public Camera sceneCam;
+    public Camera currentCamera;
     public Color32 backgroundColor;
     public Cursor cursor;
     public AudioClip wallFinish;
@@ -39,13 +42,18 @@ public class GameController : MonoBehaviour
     public GameObject endBox;
     public float endBoxVertBound;
     public float endBoxHorzBound;
+    [Space]
     public int roundNum = 1;
-
+    public List<GameObject> enemies;
+    public List<GameObject> spawns;
 
     private void Start()
     {
         CurrentHealth = Player.hp;
         timeRemaining = timeLimit;
+        currentCamera = playerCam;
+        Instantiate(enemies[0], spawns[1].transform);
+        Instantiate(enemies[0], spawns[0].transform);
 
         //Randomizes the box position
         endBoxHorzBound = Random.Range(-15f, 15f);      // Net Range of 30 Units
@@ -59,10 +67,8 @@ public class GameController : MonoBehaviour
         rightHorizontalMoveScalar = 0.5f;
         
 
-        playerCam.enabled = false;
-        sceneCam.GetComponent<AudioListener>().enabled = true;
-        sceneCam.enabled = true;
-        playerCam.GetComponent<AudioListener>().enabled = false;
+        playerCam.enabled = true;
+        playerCam.GetComponent<AudioListener>().enabled = true;
 
     }
 
@@ -75,13 +81,14 @@ public class GameController : MonoBehaviour
             Debug.Log(timeRemaining);
             startWalls = true;
         }
+
         timeRemaining -= Time.deltaTime;
         float trunkTime = Mathf.Floor(timeRemaining * 100) / 100;
         timer.text = trunkTime.ToString();
+
         if (timeRemaining > 0 && startWalls)
         {
             //Reduces the time and also updates to a new trunkated time
-            
 
             if (LeftWall.position.x <= endBox.transform.position.x - 15)
             {
@@ -124,17 +131,6 @@ public class GameController : MonoBehaviour
 
         if (Application.isEditor)
         {
-            //Camera Toggle
-            if (Input.GetKeyDown(KeyCode.C))
-            {
-                //Scene Cam Toggle
-                sceneCam.GetComponent<AudioListener>().enabled = !sceneCam.GetComponent<AudioListener>().enabled;
-                sceneCam.enabled = !sceneCam.enabled;
-
-                //Player Cam Toggle
-                playerCam.GetComponent<AudioListener>().enabled = !playerCam.GetComponent<AudioListener>().enabled;
-                playerCam.enabled = !playerCam.enabled;
-            }
             //Sets time scale to 1
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
@@ -160,4 +156,22 @@ public class GameController : MonoBehaviour
         //print(wallScale/Time.time);
     }
 
+    public void GiveMoney(int num)
+    {
+        money += num;
+        moneytxt.text = money.ToString();
+    }
+
+    public float GetTimeRemaining()
+    {
+        return timeRemaining;
+    }
+    public float GetTimeLimit()
+    {
+        return timeLimit;
+    }
+    public Transform GetEndBox()
+    {
+        return endBox.transform;
+    }
 }

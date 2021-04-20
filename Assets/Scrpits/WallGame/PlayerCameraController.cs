@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerCameraController : MonoBehaviour
 {
     public Transform player;
+    
     void Start()
     {
 

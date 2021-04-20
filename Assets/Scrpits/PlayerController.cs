@@ -11,6 +11,11 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D bod;
     public bool isJumping;
     public Rigidbody2D platform;
+    public GameObject cont;
+    [Space]
+    public GameObject bullet;
+    public Transform firePoint;
+    public Vector3 dir;
 
     private void Awake()
     {
@@ -20,6 +25,18 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        dir = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        Vector2 lookDir = dir - firePoint.position;
+        float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg - 90f;
+
+        firePoint.rotation = Quaternion.Euler(0,0,angle);
+        //Shooting
+        if (Input.GetMouseButtonDown(0))
+        {
+            Instantiate(bullet, firePoint.position, firePoint.rotation);
+        }
+        //WAD movement
         if ((Input.GetKeyDown(KeyCode.W) || (Input.GetKeyDown(KeyCode.Space))) && !isJumping)
         {
             bod.AddForce(Vector2.up * jumpHeight);
@@ -29,11 +46,6 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.A))
         {
             bod.AddForce(Vector2.left * speed * Time.deltaTime);
-        }
-
-        if (Input.GetKey(KeyCode.S))
-        {
-            //bod.AddForce(Vector2.down);
         }
 
         if (Input.GetKey(KeyCode.D))
@@ -52,6 +64,11 @@ public class PlayerController : MonoBehaviour
                 platform = collision.gameObject.GetComponent<Rigidbody2D>();
             }
         }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        Debug.Log("Entered Trigger");
     }
 
 
