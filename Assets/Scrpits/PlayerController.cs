@@ -16,6 +16,8 @@ public class PlayerController : MonoBehaviour
     public GameObject bullet;
     public Transform firePoint;
     public Vector3 dir;
+    [Space]
+    public List<Item> Inventory;
 
     private void Awake()
     {
@@ -69,6 +71,11 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerStay2D(Collider2D collision)
     {
         Debug.Log("Entered Trigger");
+        if (collision.CompareTag("health"))
+        {
+            Inventory.Add(collision.GetComponent<Item>());
+            collision.gameObject.SetActive(false);
+        }
     }
 
 

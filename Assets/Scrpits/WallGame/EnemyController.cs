@@ -38,6 +38,14 @@ public class EnemyController : MonoBehaviour
 
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Bullet"))
+        {
+            TakeDamage(collision.GetComponent<BulletScript>().dmg);
+        }
+    }
+
     public void TakeDamage(int dmg)
     {
         hp -= dmg;

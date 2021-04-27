@@ -18,6 +18,9 @@ public class GameController : MonoBehaviour
     public Text healthText;
     public Image healthImage;
     public float CurrentHealth;
+    
+    //Potential UI Item List
+
     [Space]
     public float timeLimit;
     public float timeRemaining;
