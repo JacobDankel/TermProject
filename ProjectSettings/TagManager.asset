@@ -8,6 +8,8 @@ TagManager:
   - Background
   - Platform
   - Enemy
+  - Health
+  - Bullet
   layers:
   - Default
   - TransparentFX

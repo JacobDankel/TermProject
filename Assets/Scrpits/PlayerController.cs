@@ -18,11 +18,17 @@ public class PlayerController : MonoBehaviour
     public Vector3 dir;
     [Space]
     public List<Item> Inventory;
+    public int preInvNum;
 
     private void Awake()
     {
         hp = maxHP;
         bod = GetComponent<Rigidbody2D>();
+    }
+
+    private void FixedUpdate()
+    {
+        //Inventory check with **preInvNum** and apply Inventory Effects
     }
 
     void Update()
@@ -71,9 +77,10 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerStay2D(Collider2D collision)
     {
         Debug.Log("Entered Trigger");
-        if (collision.CompareTag("health"))
+        if (collision.CompareTag("Health"))
         {
             Inventory.Add(collision.GetComponent<Item>());
+            preInvNum++;
             collision.gameObject.SetActive(false);
         }
     }
