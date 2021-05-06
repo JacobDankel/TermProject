@@ -48,15 +48,14 @@ public class GameController : MonoBehaviour
     [Space]
     public int roundNum = 1;
     public List<GameObject> enemies;
-    public List<GameObject> spawns;
+    public Transform spawnpoint;
+    public float enemySpawnRate;
 
     private void Start()
     {
         CurrentHealth = Player.hp;
         timeRemaining = timeLimit;
         currentCamera = playerCam;
-        Instantiate(enemies[0], spawns[1].transform);
-        Instantiate(enemies[0], spawns[0].transform);
 
         //Randomizes the box position
         endBoxHorzBound = Random.Range(-15f, 15f);      // Net Range of 30 Units
@@ -83,6 +82,19 @@ public class GameController : MonoBehaviour
         {
             Debug.Log(timeRemaining);
             startWalls = true;
+        }
+
+        //Enemy Spawns
+        enemySpawnRate = timeRemaining % 10;
+        if(enemySpawnRate == 0)
+        {
+            Vector3 spawn;
+            spawn.x = Random.Range(LeftWall.position.x - 15, Player.transform.position.x + 8);
+            spawn.y = 1;
+            spawn.z = 0;
+            spawnpoint.position.Set(spawn.x, spawn.y,spawn.z);
+            Debug.Log(spawn.x);
+            Instantiate(enemies[0], spawnpoint);
         }
 
         timeRemaining -= Time.deltaTime;

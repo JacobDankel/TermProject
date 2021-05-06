@@ -3245,11 +3245,9 @@ MonoBehaviour:
   roundNum: 0
   enemies:
   - {fileID: 4016025609464745287, guid: 65e1b15fc03540f4790707b196a64aa2, type: 3}
-  spawns:
-  - {fileID: 1551228235}
-  - {fileID: 576700473}
-  - {fileID: 0}
-  - {fileID: 0}
+  spawnpoint: {fileID: 2898019998927551932, guid: 0721962077436f64f87b2285e194d047,
+    type: 3}
+  enemySpawnRate: 0
 --- !u!4 &1342763187
 Transform:
   m_ObjectHideFlags: 0
