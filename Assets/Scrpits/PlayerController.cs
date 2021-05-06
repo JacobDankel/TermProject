@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -16,9 +17,10 @@ public class PlayerController : MonoBehaviour
     public GameObject bullet;
     public Transform firePoint;
     public Vector3 dir;
+    public int knockbackScalar;
     [Space]
     public List<Item> Inventory;
-    public int preInvNum;
+    public GameObject deathScene;
 
     private void Awake()
     {
@@ -74,18 +76,22 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log("Entered trigger");
+    }
+
     private void OnTriggerStay2D(Collider2D collision)
     {
         Debug.Log("Entered Trigger");
         if (collision.CompareTag("Health"))
         {
             Inventory.Add(collision.GetComponent<Item>());
-            preInvNum++;
+            maxHP += Inventory[Inventory.Count - 1].hpMod;
+            Heal(Inventory[Inventory.Count - 1].hpMod);
             collision.gameObject.SetActive(false);
         }
     }
-
-
 
     public void TakeDamage(int damage)
     {
@@ -93,6 +99,13 @@ public class PlayerController : MonoBehaviour
                 hp--;
                 if (hp<= 0) Die();
         }
+    }
+
+    public void knockback(GameObject obj)
+    { 
+        Vector2 knockback = transform.position - obj.transform.position;
+
+        bod.AddForce(knockback * knockbackScalar);
     }
 
     public void Heal(float amt)
@@ -104,6 +117,7 @@ public class PlayerController : MonoBehaviour
 
     private void Die()
     {
+        deathScene.SetActive(true);
         gameObject.SetActive(false);
         Time.timeScale = 0.5f;
     }

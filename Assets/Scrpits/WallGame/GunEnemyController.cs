@@ -2,25 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour
+public class GunEnemyController : MonoBehaviour
 {
     private PlayerController player;
+    private Rigidbody2D bod;
+    private GameController cont;
+    public GameObject bullet;
+    [Space]
 
     public int maxHp;
     public int hp;
-    [Space]
     public int dmg;
-    public float spd;
-    public Vector2 maxSpd;
-    [Space]
-    public float rotSpd;
-    public float distance;
-    Vector3 dir;
-    [Space]
-    Rigidbody2D bod;
-    GameController cont;
-    public Transform target;
 
+    [Space]
+    private Vector3 dir;
+    public float dist;
+    public float rotSpd;
+    public float spd;
+    [Space]
+    public int timer;
+    public int interval;
 
     private void Awake()
     {
@@ -28,16 +29,28 @@ public class EnemyController : MonoBehaviour
         cont = FindObjectOfType<GameController>();
         bod = GetComponent<Rigidbody2D>();
         hp = maxHp;
-        target = cont.Player.transform;
     }
 
-    void Update()
+    private void Update()
     {
-        dir = target.transform.position - transform.position;
+        timer++;
+        dir = player.transform.position - transform.position;
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90;
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), Time.deltaTime * rotSpd);
 
-        bod.AddForce(transform.up * spd * Time.deltaTime);
+        if(Mathf.Sqrt((dir.x * dir.x) + (dir.y * dir.y)) > dist)
+        {
+            bod.AddForce(transform.up * spd * Time.deltaTime);
+        } 
+        else
+        {
+            bod.AddForce(-1 * transform.up * spd * Time.deltaTime);
+        }
+
+        if(timer % interval == 0)
+        {
+            Shoot();
+        }
 
     }
 
@@ -57,10 +70,16 @@ public class EnemyController : MonoBehaviour
     public void TakeDamage(int dmg)
     {
         hp -= dmg;
-        if(hp <= 0)
+        if (hp <= 0)
         {
             Destroy(gameObject);
             cont.GiveMoney(maxHp * 10);
         }
     }
+
+    public void Shoot()
+    {
+        Instantiate(bullet, transform.position, transform.rotation);
+    }
+
 }

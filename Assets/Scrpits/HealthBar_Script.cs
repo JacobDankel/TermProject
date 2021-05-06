@@ -6,24 +6,25 @@ using UnityEngine.UI;
 public class HealthBar_Script : MonoBehaviour
 {
 
-    private Image HealthBar;
+    private Text healthTxt;
     public float CurrentHealth;
-    private float MaxHealth = 100f;
+    public float MaxHealth;
     PlayerController Player; 
     // Start is called before the first frame update
     void Start()
     {
         //To Find Health
-        HealthBar = GetComponent<Image>();
-        Player = FindObjectOfType<PlayerController>(); 
-
+        Player = FindObjectOfType<PlayerController>();
+        healthTxt = FindObjectOfType<Text>();
+        MaxHealth = Player.maxHP;
     }
 
     // Update is called once per frame
     void Update()
     {
         //Determines the percentage at which the player is at (For Slider) 
+        MaxHealth = Player.maxHP;
         CurrentHealth = Player.hp;
-        HealthBar.fillAmount = CurrentHealth / MaxHealth;
+        healthTxt.text = CurrentHealth.ToString() + "/" + MaxHealth.ToString();
     }
 }

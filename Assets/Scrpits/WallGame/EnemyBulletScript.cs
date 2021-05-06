@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletScript : MonoBehaviour
+public class EnemyBulletScript : MonoBehaviour
 {
-
     public float spd;
     Rigidbody2D bod;
     public int dmg = 1;
-    public int pierce;
 
     private void Awake()
     {
@@ -20,6 +18,16 @@ public class BulletScript : MonoBehaviour
         bod.AddForce(transform.up * spd);
 
         Invoke("Disable", 2f);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            collision.GetComponent<PlayerController>().TakeDamage(dmg);
+            collision.GetComponent<PlayerController>().knockback(gameObject);
+            Invoke("Disable", 2f);
+        }
     }
 
     void Disable()
