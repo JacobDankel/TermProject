@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -15,8 +16,6 @@ public class GameController : MonoBehaviour
     public Cursor cursor;
     public AudioClip wallFinish;
     [Space]
-    public Text healthText;
-    public Image healthImage;
     public float CurrentHealth;
     
     //Potential UI Item List
@@ -48,8 +47,11 @@ public class GameController : MonoBehaviour
     [Space]
     public int roundNum = 1;
     public List<GameObject> enemies;
-    public Transform spawnpoint;
-    public float enemySpawnRate;
+    public List<Transform> spawnpoints;
+    public float enemySpawnRateFast;
+    private int fastMod = 10;
+    public float enemySpawnRateSlow;
+    private int slowMod = 30;
 
     private void Start()
     {
@@ -74,6 +76,30 @@ public class GameController : MonoBehaviour
 
     }
 
+    private void FixedUpdate()
+    {
+        //Fast Enemy Spawn
+        enemySpawnRateFast = timeRemaining % fastMod;
+        if (enemySpawnRateFast <= 0.1)
+        {
+            for(int i = 0; i < 1; i++)
+            {
+                Instantiate(enemies[i], spawnpoints[Random.Range(0,20)]);
+            }
+            fastMod = Random.Range(7, 11);
+        }
+        //Slow Enemy Spawn
+        enemySpawnRateSlow = timeRemaining % slowMod;
+        if (enemySpawnRateSlow == 0)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Instantiate(enemies[0], spawnpoints[Random.Range(0, 20)]);
+            }
+            slowMod = Random.Range(28, 35);
+        }
+    }
+
     public void Update()
     {
         //Timer
@@ -84,19 +110,6 @@ public class GameController : MonoBehaviour
             startWalls = true;
         }
 
-        //Enemy Spawns
-        enemySpawnRate = timeRemaining % 10;
-        if(enemySpawnRate == 0)
-        {
-            Vector3 spawn;
-            spawn.x = Random.Range(LeftWall.position.x - 15, Player.transform.position.x + 8);
-            spawn.y = 1;
-            spawn.z = 0;
-            spawnpoint.position.Set(spawn.x, spawn.y,spawn.z);
-            Debug.Log(spawn.x);
-            Instantiate(enemies[0], spawnpoint);
-        }
-
         timeRemaining -= Time.deltaTime;
         float trunkTime = Mathf.Floor(timeRemaining * 100) / 100;
         timer.text = trunkTime.ToString();
@@ -105,7 +118,7 @@ public class GameController : MonoBehaviour
         {
             //Reduces the time and also updates to a new trunkated time
 
-            if (LeftWall.position.x <= endBox.transform.position.x - 15)
+            if (LeftWall.position.x <= endBox.transform.position.x - 16)
             {
                 LeftWall.position = LeftWall.position + Vector3.right * leftHorizontalMoveScalar * Time.deltaTime;
             }
@@ -114,21 +127,21 @@ public class GameController : MonoBehaviour
                 leftDone = true;
             }
 
-            if (TopWall.position.y >= endBox.transform.position.y + 11)
+            if (TopWall.position.y >= endBox.transform.position.y + 12)
             {
                 TopWall.position = TopWall.position + Vector3.down * topVerticleMoveScalar * Time.deltaTime;//   (1/60) / 100
             }
             else topDone = true;
 
 
-            if (RightWall.position.x >= endBox.transform.position.x + 15)
+            if (RightWall.position.x >= endBox.transform.position.x + 16)
             {
                 RightWall.position = RightWall.position + Vector3.left * rightHorizontalMoveScalar * Time.deltaTime;
             }
             else rightDone = true;
 
 
-            if (BottomWall.position.y <= endBox.transform.position.y - 11)
+            if (BottomWall.position.y <= endBox.transform.position.y - 12)
             {
                 BottomWall.position = BottomWall.position + Vector3.up * bottomVerticleMoveScalar * Time.deltaTime;
             }
@@ -139,10 +152,6 @@ public class GameController : MonoBehaviour
         {
             Debug.Log("Timer Ended");
         }
-
-        //Updating Health Bar
-        CurrentHealth = Player.hp;
-        healthImage.fillAmount = Player.hp / Player.maxHP;
 
         if (Application.isEditor)
         {
@@ -177,16 +186,13 @@ public class GameController : MonoBehaviour
         moneytxt.text = money.ToString();
     }
 
-    public float GetTimeRemaining()
+    public void Retry()
     {
-        return timeRemaining;
+        SceneManager.LoadScene("WallGame");
     }
-    public float GetTimeLimit()
+    
+    public void Quit()
     {
-        return timeLimit;
-    }
-    public Transform GetEndBox()
-    {
-        return endBox.transform;
+        SceneManager.LoadScene("WallGameTitleScene");
     }
 }

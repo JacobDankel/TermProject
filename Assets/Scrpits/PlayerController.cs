@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class PlayerController : MonoBehaviour
     public bool isJumping;
     public Rigidbody2D platform;
     public GameObject cont;
+    public Text healthText;
     [Space]
     public GameObject bullet;
     public Transform firePoint;
@@ -28,13 +30,10 @@ public class PlayerController : MonoBehaviour
         bod = GetComponent<Rigidbody2D>();
     }
 
-    private void FixedUpdate()
-    {
-        //Inventory check with **preInvNum** and apply Inventory Effects
-    }
-
     void Update()
     {
+        healthText.text = hp.ToString() + "/" + maxHP.ToString();
+
         dir = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         Vector2 lookDir = dir - firePoint.position;
@@ -76,14 +75,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        Debug.Log("Entered trigger");
-    }
-
     private void OnTriggerStay2D(Collider2D collision)
     {
-        Debug.Log("Entered Trigger");
         if (collision.CompareTag("Health"))
         {
             Inventory.Add(collision.GetComponent<Item>());
@@ -119,7 +112,6 @@ public class PlayerController : MonoBehaviour
     {
         deathScene.SetActive(true);
         gameObject.SetActive(false);
-        Time.timeScale = 0.5f;
     }
     
 }

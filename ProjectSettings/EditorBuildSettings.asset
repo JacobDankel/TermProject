@@ -4,5 +4,14 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/WallGameTitleScene.unity
+    guid: d3da68f7d3ca27941b9da9ac375691f0
+  - enabled: 1
+    path: Assets/Scenes/WallGameHowToPlay.unity
+    guid: 4fcd19e3753eb4e4680708590161287a
+  - enabled: 1
+    path: Assets/Scenes/WallGame.unity
+    guid: 7567748f1b1b37343957beff093cf001
   m_configObjects: {}
