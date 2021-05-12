@@ -22,6 +22,10 @@ public class BulletScript : MonoBehaviour
         Invoke("Disable", 2f);
     }
 
+    public void addDmg(int n)
+    {
+        dmg += n;
+    }
     void Disable()
     {
         gameObject.SetActive(false);

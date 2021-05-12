@@ -8,7 +8,7 @@ public class Item : MonoBehaviour
     public int cost;
     public float spdMod;
     public float hpMod;
-    public float dmhMod;
+    public float dmgMod;
 
 
 }

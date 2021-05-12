@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public float maxHP;
     public float hp;
     public int speed;
+    private int speedMod;
     public int jumpHeight;
     Rigidbody2D bod;
     public bool isJumping;
@@ -27,11 +28,14 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         hp = maxHP;
+        speedMod = 0;
+        speed = speed + speedMod;
         bod = GetComponent<Rigidbody2D>();
     }
 
     void Update()
     {
+        //Health Update
         healthText.text = hp.ToString() + "/" + maxHP.ToString();
 
         dir = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -77,11 +81,27 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
+        //Health Pickup Check
         if (collision.CompareTag("Health"))
         {
             Inventory.Add(collision.GetComponent<Item>());
             maxHP += Inventory[Inventory.Count - 1].hpMod;
             Heal(Inventory[Inventory.Count - 1].hpMod);
+            collision.gameObject.SetActive(false);
+        }
+        //Damage Pickup Check
+        if (collision.CompareTag("Damage"))
+        {
+            Inventory.Add(collision.GetComponent<Item>());
+            bullet.GetComponent<BulletScript>().addDmg((int)collision.GetComponent<Item>().dmgMod);
+            collision.gameObject.SetActive(false);
+        }
+        //Speed Pickup Check
+        if(collision.CompareTag("Speed"))
+        {
+            Inventory.Add(collision.GetComponent<Item>());
+            speedMod += (int)collision.GetComponent<Item>().spdMod;
+            speed += speedMod;
             collision.gameObject.SetActive(false);
         }
     }

@@ -6,11 +6,20 @@ using UnityEngine.SceneManagement;
 public class WallGameTitleController : MonoBehaviour
 {
     public string startScene;
+    public string gameScene;
+    public bool playedBefore;
     // Start is called before the first frame update
 
     public void startGame()
     {
-        SceneManager.LoadScene(startScene);
+        if (playedBefore)
+        {
+            SceneManager.LoadScene(gameScene);
+        }
+        else
+        {
+            SceneManager.LoadScene(startScene);
+        }
     }
 
     public void Quit()

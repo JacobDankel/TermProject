@@ -17,9 +17,11 @@ public class GameController : MonoBehaviour
     public AudioClip wallFinish;
     [Space]
     public float CurrentHealth;
-    
+
     //Potential UI Item List
 
+    public List<Item> items;
+    public GameObject[] itemSpawns;
     [Space]
     public float timeLimit;
     public float timeRemaining;
@@ -52,12 +54,24 @@ public class GameController : MonoBehaviour
     private int fastMod = 10;
     public float enemySpawnRateSlow;
     private int slowMod = 30;
+    private bool spawnEnemies;
 
     private void Start()
     {
         CurrentHealth = Player.hp;
         timeRemaining = timeLimit;
         currentCamera = playerCam;
+
+        //Populate item spawn position
+        for(int i = 0; i < itemSpawns.Length; i++)
+        {
+            itemSpawns[i] = GameObject.FindGameObjectWithTag("Platform");
+            itemSpawns[i].SetActive(false);
+        }
+        for (int i = 0; i < itemSpawns.Length; i++) //Extra Loop to properly add the spawns in the array
+        {
+            itemSpawns[i].SetActive(true);
+        }
 
         //Randomizes the box position
         endBoxHorzBound = Random.Range(-15f, 15f);      // Net Range of 30 Units
@@ -74,27 +88,34 @@ public class GameController : MonoBehaviour
         playerCam.enabled = true;
         playerCam.GetComponent<AudioListener>().enabled = true;
 
+        spawnEnemies = true;
+
+        spawnItems();
+        spawnItems();
     }
 
     private void FixedUpdate()
     {
         //Fast Enemy Spawn
         enemySpawnRateFast = timeRemaining % fastMod;
-        if (enemySpawnRateFast <= 0.1)
+        if (enemySpawnRateFast <= 0.1 && spawnEnemies)
         {
+            Debug.Log("Fast Spawn");
             for(int i = 0; i < 1; i++)
             {
-                Instantiate(enemies[i], spawnpoints[Random.Range(0,20)]);
+                Instantiate(enemies[0], spawnpoints[Random.Range(0,20)]);
             }
             fastMod = Random.Range(7, 11);
         }
         //Slow Enemy Spawn
         enemySpawnRateSlow = timeRemaining % slowMod;
-        if (enemySpawnRateSlow == 0)
+        if (enemySpawnRateSlow <= 0 && spawnEnemies)
         {
+            Debug.Log("Slow Spawn");
             for (int i = 0; i < 3; i++)
             {
                 Instantiate(enemies[0], spawnpoints[Random.Range(0, 20)]);
+                Instantiate(enemies[1], spawnpoints[Random.Range(0, 20)]);
             }
             slowMod = Random.Range(28, 35);
         }
@@ -103,10 +124,8 @@ public class GameController : MonoBehaviour
     public void Update()
     {
         //Timer
-        
-        if(timeRemaining <= timeLimit - 20 && !startWalls)
+        if(timeRemaining <= timeLimit - 20 && !startWalls)      //Starts the walls 20 seconds in
         {
-            Debug.Log(timeRemaining);
             startWalls = true;
         }
 
@@ -127,7 +146,7 @@ public class GameController : MonoBehaviour
                 leftDone = true;
             }
 
-            if (TopWall.position.y >= endBox.transform.position.y + 12)
+            if (TopWall.position.y >= endBox.transform.position.y + 12.5)
             {
                 TopWall.position = TopWall.position + Vector3.down * topVerticleMoveScalar * Time.deltaTime;//   (1/60) / 100
             }
@@ -141,17 +160,22 @@ public class GameController : MonoBehaviour
             else rightDone = true;
 
 
-            if (BottomWall.position.y <= endBox.transform.position.y - 12)
+            if (BottomWall.position.y <= endBox.transform.position.y - 12.5)
             {
                 BottomWall.position = BottomWall.position + Vector3.up * bottomVerticleMoveScalar * Time.deltaTime;
             }
             else bottomDone = true;
 
         }
+
+        //--------End of the Timer--------//
         if(timeRemaining <= 0)
         {
             Debug.Log("Timer Ended");
+            spawnEnemies = false;
         }
+
+
 
         if (Application.isEditor)
         {
@@ -178,6 +202,16 @@ public class GameController : MonoBehaviour
             }
         }
         //print(wallScale/Time.time);
+    }
+
+    public void spawnItems()
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            Vector3 spot = itemSpawns[Random.Range(0,41)].transform.position;
+            spot.y += 1;
+            Instantiate(items[i], spot, Quaternion.identity);
+        }
     }
 
     public void GiveMoney(int num)
