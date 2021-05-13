@@ -134,7 +134,7 @@ public class PlayerController : MonoBehaviour
     {
         deathScene.SetActive(true);
         gameObject.SetActive(false);
-        endPoints.text = cont.money.ToString();
+        endPoints.text = "Points: " + cont.money.ToString();
     }
     
 }

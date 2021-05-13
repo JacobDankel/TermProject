@@ -632,7 +632,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 411354131}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.89, y: -0.34, z: 0}
+  m_LocalPosition: {x: 0.89, y: -0.34, z: -0.1}
   m_LocalScale: {x: 0.25, y: 0.25, z: 1}
   m_Children: []
   m_Father: {fileID: 700933284}
@@ -1108,6 +1108,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startScene: WallGameHowToPlay
+  gameScene: 
+  playedBefore: 0
 --- !u!4 &1240668643
 Transform:
   m_ObjectHideFlags: 0
@@ -1699,7 +1701,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2028012765}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.9314053, y: 1.4320549, z: 0}
+  m_LocalPosition: {x: -0.9314053, y: 1.4320549, z: -0.1}
   m_LocalScale: {x: 0.25, y: 0.25, z: 1}
   m_Children: []
   m_Father: {fileID: 700933284}

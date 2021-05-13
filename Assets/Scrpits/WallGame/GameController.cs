@@ -258,6 +258,9 @@ public class GameController : MonoBehaviour
         {
             Destroy(enemiesSpawned[i]);
         }
+
+        spawnItems();
+        spawnItems();
     }
 
     public void randBoxPos()
