@@ -19,6 +19,8 @@ public class GunEnemyController : MonoBehaviour
     public float dist;
     public float rotSpd;
     public float spd;
+    public Vector2 vel;
+    public float maxVel;
     [Space]
     public int timer;
     public int interval;
@@ -33,12 +35,33 @@ public class GunEnemyController : MonoBehaviour
 
     private void Update()
     {
+        vel = bod.velocity;
         timer++;
         dir = player.transform.position - transform.position;
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90;
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), Time.deltaTime * rotSpd);
+        //Velocity Cap
+        if (bod.velocity.x >= maxVel)
+        {
+            bod.velocity = new Vector2(maxVel, bod.velocity.y);
+        }
 
-        if(Mathf.Sqrt((dir.x * dir.x) + (dir.y * dir.y)) > dist)
+        if (bod.velocity.y >= maxVel)
+        {
+            bod.velocity = new Vector2(bod.velocity.x, maxVel);
+        }
+
+        if (-bod.velocity.x >= maxVel)
+        {
+            bod.velocity = new Vector2(-maxVel, bod.velocity.y);
+        }
+
+        if (-bod.velocity.y >= maxVel)
+        {
+            bod.velocity = new Vector2(bod.velocity.x, -maxVel);
+        }
+        //Moving at a specific distance
+        if (Mathf.Sqrt((dir.x * dir.x) + (dir.y * dir.y)) > dist)
         {
             bod.AddForce(transform.up * spd * Time.deltaTime);
         } 

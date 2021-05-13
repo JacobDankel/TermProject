@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D bod;
     public bool isJumping;
     public Rigidbody2D platform;
-    public GameObject cont;
+    public GameController cont;
     public Text healthText;
     [Space]
     public GameObject bullet;
@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     [Space]
     public List<Item> Inventory;
     public GameObject deathScene;
+    public Text endPoints;
 
     private void Awake()
     {
@@ -31,6 +32,7 @@ public class PlayerController : MonoBehaviour
         speedMod = 0;
         speed = speed + speedMod;
         bod = GetComponent<Rigidbody2D>();
+        cont = FindObjectOfType<GameController>();
     }
 
     void Update()
@@ -132,6 +134,7 @@ public class PlayerController : MonoBehaviour
     {
         deathScene.SetActive(true);
         gameObject.SetActive(false);
+        endPoints.text = cont.money.ToString();
     }
     
 }

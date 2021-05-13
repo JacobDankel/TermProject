@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour
 {
     public PlayerController Player;
+    private Vector3 playerSpawn;
     public int money;
     public Text moneytxt;
     [Space]
@@ -42,6 +43,8 @@ public class GameController : MonoBehaviour
     private bool rightDone = false;
     public Transform BottomWall;
     private bool bottomDone = true;
+    private float xPos = 34;
+    private float yPos = 21;
     [Space]
     public GameObject endBox;
     public float endBoxVertBound;
@@ -49,18 +52,22 @@ public class GameController : MonoBehaviour
     [Space]
     public int roundNum = 1;
     public List<GameObject> enemies;
+    public List<GameObject> enemiesSpawned;
     public List<Transform> spawnpoints;
     public float enemySpawnRateFast;
     private int fastMod = 10;
     public float enemySpawnRateSlow;
     private int slowMod = 30;
     private bool spawnEnemies;
+    private bool endRound;
 
     private void Start()
     {
+        endRound = false;
         CurrentHealth = Player.hp;
         timeRemaining = timeLimit;
         currentCamera = playerCam;
+        playerSpawn = new Vector3(0, -2, 0);
 
         //Populate item spawn position
         for(int i = 0; i < itemSpawns.Length; i++)
@@ -74,9 +81,7 @@ public class GameController : MonoBehaviour
         }
 
         //Randomizes the box position
-        endBoxHorzBound = Random.Range(-15f, 15f);      // Net Range of 30 Units
-        endBoxVertBound = Random.Range(-8f, 8f);        // Net Range of 16 Units
-        endBox.transform.position = new Vector3(endBoxHorzBound, endBoxVertBound, 0);
+        randBoxPos();
 
         //Calcuates the amount to move the walls
         topVerticleMoveScalar = 0.25f;
@@ -103,19 +108,23 @@ public class GameController : MonoBehaviour
             Debug.Log("Fast Spawn");
             for(int i = 0; i < 1; i++)
             {
-                Instantiate(enemies[0], spawnpoints[Random.Range(0,20)]);
+                GameObject enemy = Instantiate(enemies[0], spawnpoints[Random.Range(0,20)]);
+                enemiesSpawned.Add(enemy);
             }
             fastMod = Random.Range(7, 11);
         }
         //Slow Enemy Spawn
         enemySpawnRateSlow = timeRemaining % slowMod;
-        if (enemySpawnRateSlow <= 0 && spawnEnemies)
+        if (enemySpawnRateSlow <= 0.1 && spawnEnemies)
         {
             Debug.Log("Slow Spawn");
             for (int i = 0; i < 3; i++)
             {
-                Instantiate(enemies[0], spawnpoints[Random.Range(0, 20)]);
-                Instantiate(enemies[1], spawnpoints[Random.Range(0, 20)]);
+                GameObject enemy1 = Instantiate(enemies[0], spawnpoints[Random.Range(0, 20)]);
+                GameObject enemy2 = Instantiate(enemies[1], spawnpoints[Random.Range(0, 20)]);
+                enemiesSpawned.Add(enemy1);
+                enemiesSpawned.Add(enemy2);
+
             }
             slowMod = Random.Range(28, 35);
         }
@@ -129,9 +138,13 @@ public class GameController : MonoBehaviour
             startWalls = true;
         }
 
-        timeRemaining -= Time.deltaTime;
-        float trunkTime = Mathf.Floor(timeRemaining * 100) / 100;
-        timer.text = trunkTime.ToString();
+        //Time Counter & Text Updates
+        if (!endRound)
+        {
+            timeRemaining -= Time.deltaTime;
+            float trunkTime = Mathf.Floor(timeRemaining * 100) / 100;
+            timer.text = trunkTime.ToString();
+        }
 
         if (timeRemaining > 0 && startWalls)
         {
@@ -173,6 +186,8 @@ public class GameController : MonoBehaviour
         {
             Debug.Log("Timer Ended");
             spawnEnemies = false;
+            endRound = true;
+            Respawn();
         }
 
 
@@ -220,13 +235,35 @@ public class GameController : MonoBehaviour
         moneytxt.text = money.ToString();
     }
 
-    public void Retry()
+    //End of Timer Reset
+    public void Respawn()
     {
-        SceneManager.LoadScene("WallGame");
+        for(int i = 0; i < spawnpoints.Count; i++)
+        {
+            spawnpoints[i].gameObject.SetActive(false);
+        }
+        Player.transform.position = playerSpawn;
+        timeRemaining = timeLimit;
+        LeftWall.transform.position = new Vector3(-xPos, 0, 0);
+        RightWall.transform.position = new Vector3(xPos, 0, 0);
+        TopWall.transform.position = new Vector3(0, yPos, 0);
+        BottomWall.transform.position = new Vector3(0, -yPos, 0);
+        endRound = false;
+        startWalls = false;
+        for (int i = 0; i < spawnpoints.Count; i++)
+        {
+            spawnpoints[i].gameObject.SetActive(true);
+        }
+        for(int i = 0; i < enemiesSpawned.Count; i++)
+        {
+            Destroy(enemiesSpawned[i]);
+        }
     }
-    
-    public void Quit()
+
+    public void randBoxPos()
     {
-        SceneManager.LoadScene("WallGameTitleScene");
+        endBoxHorzBound = Random.Range(-15f, 15f);      // Net Range of 30 Units
+        endBoxVertBound = Random.Range(-8f, 8f);        // Net Range of 16 Units
+        endBox.transform.position = new Vector3(endBoxHorzBound, endBoxVertBound, 0);
     }
 }

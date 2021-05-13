@@ -37,7 +37,7 @@ public class EnemyController : MonoBehaviour
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90;
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), Time.deltaTime * rotSpd);
 
-        bod.AddForce(transform.up * spd * Time.deltaTime);
+        bod.AddForce(transform.up * spd * Time.deltaTime) ;
 
     }
 

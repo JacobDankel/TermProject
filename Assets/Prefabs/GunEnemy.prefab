@@ -101,8 +101,10 @@ MonoBehaviour:
   hp: 0
   dmg: 1
   dist: 5
-  rotSpd: 20
-  spd: 200
+  rotSpd: 100
+  spd: 150
+  vel: {x: 0, y: 0}
+  maxVel: 5
   timer: 0
   interval: 180
 --- !u!50 &7117081835121061570
